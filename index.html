@@ -100,30 +100,23 @@
   <audio id="ambience" src="ambience.mp3" preload="auto" loop></audio>
 
   <script>
-    // Play ambience quietly on load
-    window.addEventListener("DOMContentLoaded", () => {
-      const ambience = document.getElementById("ambience");
-      ambience.volume = 0.05;
+    const ambience = document.getElementById("ambience");
+    const chime = document.getElementById("chime");
 
-      // Attempt autoplay
-      ambience.play().catch((err) => {
-        console.log("Autoplay blocked. Waiting for user interaction...");
-        // Will try again on first user click
+    window.addEventListener("DOMContentLoaded", () => {
+      ambience.volume = 0.12; // slightly louder
+      ambience.play().catch(() => {
+        // if autoplay fails, try again on user interaction
         document.body.addEventListener("click", () => {
-          ambience.play().catch(e => console.log("Still blocked:", e));
+          ambience.play().catch(() => {});
         }, { once: true });
       });
     });
 
     function playChime() {
-      const chime = document.getElementById('chime');
       const btn = document.querySelector('.enter-button');
-
       chime.currentTime = 0;
-      chime.play().catch((e) => {
-        console.log("Chime playback blocked:", e);
-      });
-
+      chime.play().catch(() => {});
       btn.classList.add("clicked");
     }
   </script>

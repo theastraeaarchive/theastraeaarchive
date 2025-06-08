@@ -9,13 +9,14 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      background: radial-gradient(ellipse at center, #0a0f24 0%, #000 100%);
-      color: #ffffff;
-      font-family: 'Georgia', serif;
       overflow: hidden;
+      background: radial-gradient(ellipse at center, #0a0f24 0%, #000 100%);
+      font-family: 'Georgia', serif;
+      color: #ffffff;
       cursor: none;
     }
 
+    /* Star Background */
     .stars {
       position: absolute;
       width: 100%;
@@ -30,6 +31,21 @@
       to { background-position: -10000px 10000px; }
     }
 
+    /* Cursor Trail */
+    .cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      background-color: #c9aaff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      box-shadow: 0 0 10px #c9aaff, 0 0 20px #c9aaff;
+    }
+
+    /* Center Content */
     .center-content {
       position: absolute;
       top: 50%;
@@ -63,7 +79,7 @@
       border: 1px solid #c9aaff;
       border-radius: 30px;
       text-decoration: none;
-      transition: background 0.3s ease, transform 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
     }
 
     .enter-button:hover {
@@ -73,25 +89,12 @@
 
     .enter-button:active {
       transform: scale(0.97);
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
     @keyframes fadeIn {
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
-    }
-
-    .cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 6px;
-      height: 6px;
-      background-color: #c9aaff;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      box-shadow: 0 0 10px #c9aaff, 0 0 20px #c9aaff;
     }
   </style>
 </head>
@@ -100,35 +103,40 @@
   <div class="center-content">
     <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
     <div class="line">you were always meant to find this...</div>
-    <a href="main.html" class="enter-button" onclick="playChime()">enter the archive</a>
+    <a href="main.html" class="enter-button" onclick="handleEnterClick()">enter the archive</a>
   </div>
 
   <div class="cursor" id="cursor"></div>
 
-  <audio id="ambience" src="ambience.mp3" autoplay loop></audio>
+  <!-- Audio -->
+  <audio id="ambience" src="ambience.mp3" loop></audio>
   <audio id="chime" src="glimmer.mp3"></audio>
 
   <script>
-    // Cursor trail
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.pageX + 'px';
-      cursor.style.top = e.pageY + 'px';
+    // Cursor Trail
+    const cursor = document.getElementById("cursor");
+    document.addEventListener("mousemove", e => {
+      cursor.style.left = e.pageX + "px";
+      cursor.style.top = e.pageY + "px";
     });
 
-    // Allow ambience to autoplay
+    // Autoplay Ambience on First Click
     const ambience = document.getElementById("ambience");
+    let hasStarted = false;
     window.addEventListener("click", () => {
-      ambience.volume = 0.35;
-      ambience.play().catch(() => {});
+      if (!hasStarted) {
+        ambience.volume = 0.4;
+        ambience.play().catch(() => {});
+        hasStarted = true;
+      }
     });
 
-    // Play chime
-    function playChime() {
+    // Button Chime Playback
+    function handleEnterClick() {
       const chime = document.getElementById("chime");
       chime.currentTime = 0;
       chime.volume = 0.7;
-      chime.play();
+      chime.play().catch(() => {});
     }
   </script>
 </body>

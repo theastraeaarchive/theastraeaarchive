@@ -96,7 +96,7 @@
 
   <!-- Audio -->
   <audio id="ambience" src="ambience.mp3" loop></audio>
-  <audio id="chime" src="chime.mp3"></audio>
+  <audio id="chime" src="chime.mp3" preload="auto"></audio>
 
   <script>
     const ambience = document.getElementById("ambience");
@@ -104,19 +104,23 @@
     const btn = document.getElementById("enter-btn");
     const fadeContainer = document.querySelector('.fade-container');
 
+    // Start ambience on page load
     window.addEventListener("DOMContentLoaded", () => {
-      ambience.volume = 0.3;
+      ambience.volume = 0.4;
       ambience.play().catch(() => {
-        document.body.addEventListener("click", () => {
-          ambience.play().catch(() => {});
-        }, { once: true });
+        document.body.addEventListener("click", () => ambience.play(), { once: true });
       });
     });
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
+
+      // Ensure chime always plays
+      chime.pause();
       chime.currentTime = 0;
       chime.play().catch(() => {});
+
+      // Fade out and redirect
       fadeContainer.classList.add("fade-out");
       setTimeout(() => {
         window.location.href = "main.html";

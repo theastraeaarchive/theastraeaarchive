@@ -13,9 +13,9 @@
       color: #ffffff;
       font-family: 'Georgia', serif;
       overflow: hidden;
+      cursor: none;
     }
 
-    /* STARFIELD BACKGROUND */
     .stars, .stars2, .stars3 {
       position: absolute;
       width: 200%;
@@ -47,7 +47,6 @@
       to { transform: translate(-100px, 100px); }
     }
 
-    /* CENTER CONTENT */
     .center-content {
       position: absolute;
       top: 50%;
@@ -60,8 +59,18 @@
     .sigil {
       width: 150px;
       height: auto;
-      filter: drop-shadow(0 0 12px #c9aaff);
+      filter: drop-shadow(0 0 15px #c9aaff);
       margin-bottom: 2rem;
+      animation: pulse 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 12px #c9aaff);
+      }
+      50% {
+        filter: drop-shadow(0 0 25px #d3bbff);
+      }
     }
 
     .line {
@@ -81,21 +90,22 @@
       border: 1px solid #c9aaff;
       border-radius: 30px;
       text-decoration: none;
-      transition: all 0.4s ease;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
     }
 
     .enter-button:hover {
       background: rgba(201, 170, 255, 0.3);
+      box-shadow: 0 0 12px #c9aaff;
       transform: scale(1.05);
-      box-shadow: 0 0 10px #c9aaff;
     }
 
     @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Fade transition without move */
     .fade-out {
       animation: fadeOut 1s ease forwards;
     }
@@ -103,7 +113,26 @@
     @keyframes fadeOut {
       to {
         opacity: 0;
-        transform: scale(1.05);
+      }
+    }
+
+    /* Cursor sparkle trail */
+    .sparkle {
+      position: fixed;
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.8;
+      animation: sparkleFade 0.7s linear forwards;
+      z-index: 5;
+    }
+
+    @keyframes sparkleFade {
+      to {
+        transform: translateY(-20px) scale(0.5);
+        opacity: 0;
       }
     }
   </style>
@@ -125,7 +154,7 @@
 
     const bgAudio = new Audio("ambience.mp3");
     bgAudio.loop = true;
-    bgAudio.volume = 0.45;
+    bgAudio.volume = 0.5;
 
     const clickSound = new Audio("glimmer.mp3");
     clickSound.volume = 1.0;
@@ -146,14 +175,21 @@
       fadeContainer.classList.add("fade-out");
 
       clickSound.currentTime = 0;
-      clickSound.play().catch(err => console.warn("Click sound blocked:", err));
+      clickSound.play().catch(err => console.warn("Click sound error:", err));
 
-      // Shorten button sound duration to 0.8s, then redirect
       setTimeout(() => {
-        clickSound.pause();
-        clickSound.currentTime = 0;
         window.location.href = "main.html";
-      }, 800);
+      }, 1200);
+    });
+
+    // Stardust trail effect
+    document.addEventListener("mousemove", (e) => {
+      const sparkle = document.createElement("div");
+      sparkle.classList.add("sparkle");
+      sparkle.style.left = `${e.clientX}px`;
+      sparkle.style.top = `${e.clientY}px`;
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 700);
     });
   </script>
 </body>

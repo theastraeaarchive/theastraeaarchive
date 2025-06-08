@@ -95,7 +95,6 @@
     const button = document.getElementById("enterBtn");
     const fadeContainer = document.getElementById("fadeContainer");
 
-    // Audio setup
     const bgAudio = new Audio("ambience.mp3");
     bgAudio.loop = true;
     bgAudio.volume = 0.45;
@@ -107,9 +106,7 @@
 
     function initAudio() {
       if (!audioInitialized) {
-        bgAudio.play().catch(err => {
-          console.warn("Autoplay blocked:", err);
-        });
+        bgAudio.play().catch(err => console.warn("Autoplay blocked:", err));
         audioInitialized = true;
       }
     }
@@ -118,16 +115,14 @@
 
     button.addEventListener("click", (e) => {
       e.preventDefault();
-      clickSound.currentTime = 0;
-      clickSound.play().catch(err => {
-        console.warn("Click sound blocked:", err);
-      });
-
       fadeContainer.classList.add("fade-out");
 
-      setTimeout(() => {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(err => console.warn("Click sound blocked:", err));
+
+      clickSound.onended = () => {
         window.location.href = "main.html";
-      }, 700);
+      };
     });
   </script>
 </body>

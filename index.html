@@ -9,20 +9,19 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
       background: radial-gradient(ellipse at center, #0a0f24 0%, #000 100%);
-      font-family: 'Georgia', serif;
       color: #ffffff;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
       cursor: none;
     }
 
-    /* Star Background */
     .stars {
       position: absolute;
       width: 100%;
       height: 100%;
-      background: url('https://cdn.pixabay.com/photo/2013/07/18/10/56/stars-163870_1280.jpg') repeat;
-      animation: moveStars 300s linear infinite;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+      animation: moveStars 200s linear infinite;
       z-index: 0;
     }
 
@@ -31,21 +30,11 @@
       to { background-position: -10000px 10000px; }
     }
 
-    /* Cursor Trail */
-    .cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 6px;
-      height: 6px;
-      background-color: #c9aaff;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      box-shadow: 0 0 10px #c9aaff, 0 0 20px #c9aaff;
+    .fade-out {
+      opacity: 0;
+      transition: opacity 1s ease-out;
     }
 
-    /* Center Content */
     .center-content {
       position: absolute;
       top: 50%;
@@ -53,12 +42,13 @@
       transform: translate(-50%, -50%);
       text-align: center;
       z-index: 2;
+      pointer-events: none;
     }
 
     .sigil {
-      width: 150px;
+      width: 160px;
       height: auto;
-      filter: drop-shadow(0 0 12px #c9aaff);
+      filter: drop-shadow(0 0 15px #c9aaff);
       margin-bottom: 2rem;
     }
 
@@ -72,72 +62,147 @@
 
     .enter-button {
       display: inline-block;
-      padding: 12px 28px;
+      padding: 14px 32px;
       font-size: 1rem;
       color: #fff;
       background: rgba(201, 170, 255, 0.1);
       border: 1px solid #c9aaff;
       border-radius: 30px;
       text-decoration: none;
-      transition: background 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
+      cursor: none;
+      transition: all 0.3s ease;
+      animation: shimmer 2.5s ease-in-out infinite;
+      pointer-events: auto;
     }
 
     .enter-button:hover {
       background: rgba(201, 170, 255, 0.3);
       transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(201, 170, 255, 0.5);
     }
 
     .enter-button:active {
-      transform: scale(0.97);
-      opacity: 0.7;
+      transform: scale(0.92);
+    }
+
+    .clicked {
+      animation: pressFade 0.6s forwards;
+    }
+
+    @keyframes pressFade {
+      0% {
+        transform: scale(0.95);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.1);
+        opacity: 0;
+      }
     }
 
     @keyframes fadeIn {
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+
+    @keyframes shimmer {
+      0%, 100% { box-shadow: 0 0 10px rgba(201, 170, 255, 0.2); }
+      50% { box-shadow: 0 0 20px rgba(201, 170, 255, 0.5); }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
+  <canvas id="trail"></canvas>
   <div class="stars"></div>
-  <div class="center-content">
+
+  <div class="center-content" id="fadeTarget">
     <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
     <div class="line">you were always meant to find this...</div>
-    <a href="main.html" class="enter-button" onclick="handleEnterClick()">enter the archive</a>
+    <a class="enter-button" id="enterBtn" role="button">enter the archive</a>
   </div>
 
-  <div class="cursor" id="cursor"></div>
-
-  <!-- Audio -->
-  <audio id="ambience" src="ambience.mp3" loop></audio>
-  <audio id="chime" src="glimmer.mp3"></audio>
+  <audio id="ambience" src="ambience.mp3" loop preload="auto"></audio>
+  <audio id="chime" src="glimmer.mp3" preload="auto"></audio>
 
   <script>
-    // Cursor Trail
-    const cursor = document.getElementById("cursor");
-    document.addEventListener("mousemove", e => {
-      cursor.style.left = e.pageX + "px";
-      cursor.style.top = e.pageY + "px";
+    // Start ambience on interaction
+    const ambience = document.getElementById('ambience');
+    ambience.volume = 0.35;
+    window.addEventListener('click', () => {
+      if (ambience.paused) ambience.play().catch(() => {});
+    }, { once: true });
+
+    // Button click logic
+    const enterBtn = document.getElementById('enterBtn');
+    const fadeTarget = document.getElementById('fadeTarget');
+    const chime = document.getElementById('chime');
+
+    enterBtn.addEventListener('click', () => {
+      chime.currentTime = 0;
+      chime.play().catch(() => {});
+      enterBtn.classList.add('clicked');
+      fadeTarget.classList.add('fade-out');
+      setTimeout(() => {
+        window.location.href = "main.html";
+      }, 800);
     });
 
-    // Autoplay Ambience on First Click
-    const ambience = document.getElementById("ambience");
-    let hasStarted = false;
-    window.addEventListener("click", () => {
-      if (!hasStarted) {
-        ambience.volume = 0.4;
-        ambience.play().catch(() => {});
-        hasStarted = true;
+    // Cursor star trail
+    const canvas = document.getElementById('trail');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+
+    function createParticle(x, y) {
+      particles.push({
+        x,
+        y,
+        alpha: 1,
+        size: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        p.x += p.dx;
+        p.y += p.dy;
+        p.alpha -= 0.01;
+        if (p.alpha <= 0) particles.splice(i, 1);
+        else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(201, 170, 255, ${p.alpha})`;
+          ctx.fill();
+        }
+      });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('mousemove', e => {
+      for (let i = 0; i < 2; i++) {
+        createParticle(e.clientX, e.clientY);
       }
     });
 
-    // Button Chime Playback
-    function handleEnterClick() {
-      const chime = document.getElementById("chime");
-      chime.currentTime = 0;
-      chime.volume = 0.7;
-      chime.play().catch(() => {});
-    }
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   </script>
 </body>
 </html>

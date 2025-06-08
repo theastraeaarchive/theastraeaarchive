@@ -105,7 +105,7 @@
 <body>
   <div class="stars"></div>
   <div class="center-content" id="center">
-    <img src="AstraeaArchive.png" alt="Astraea Archive Sigil" class="sigil" id="sigil" />
+    <img src="emblem.png" alt="Astraea Archive Sigil" class="sigil" id="sigil" />
     <div class="line" id="line">you were always meant to find this.</div>
     <a href="main.html" class="enter-button" id="enterBtn">enter the archive</a>
   </div>
@@ -123,18 +123,15 @@
 
     enterBtn.addEventListener('click', function(e) {
       e.preventDefault();
-
       chime.currentTime = 0;
       chime.play();
-
       enterBtn.classList.add('animate');
       sigil.style.opacity = 0;
       line.style.opacity = 0;
       center.style.opacity = 0;
-
       setTimeout(() => {
         window.location.href = "main.html";
-      }, 1200); // allows shimmer/fade to complete
+      }, 1200);
     });
   </script>
 </body>

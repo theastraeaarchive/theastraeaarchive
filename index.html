@@ -36,16 +36,13 @@
       transform: translate(-50%, -50%);
       text-align: center;
       z-index: 2;
-      transition: opacity 1s ease;
     }
 
     .sigil {
-      width: 180px;
+      width: 150px;
       height: auto;
-      filter: drop-shadow(0 0 16px #c9aaff);
-      margin-bottom: 2.5rem;
-      object-fit: contain;
-      transition: opacity 1s ease;
+      filter: drop-shadow(0 0 12px #c9aaff);
+      margin-bottom: 2rem;
     }
 
     .line {
@@ -54,7 +51,6 @@
       margin-bottom: 3rem;
       letter-spacing: 0.05em;
       animation: fadeIn 3s ease-out forwards;
-      transition: opacity 1s ease;
     }
 
     .enter-button {
@@ -66,9 +62,7 @@
       border: 1px solid #c9aaff;
       border-radius: 30px;
       text-decoration: none;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      transition: all 0.4s ease;
     }
 
     .enter-button:hover {
@@ -76,64 +70,49 @@
       transform: scale(1.05);
     }
 
-    .enter-button.animate {
-      animation: shimmerFade 1s forwards;
+    .enter-button.clicked {
+      animation: shimmerFade 0.8s forwards;
+    }
+
+    @keyframes shimmerFade {
+      0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0px #fff; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 20px #c9aaff; }
+      100% { transform: scale(0.95); opacity: 0; box-shadow: 0 0 0px transparent; }
     }
 
     @keyframes fadeIn {
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-
-    @keyframes shimmerFade {
-      0% {
-        transform: scale(1);
-        box-shadow: 0 0 10px rgba(201, 170, 255, 0.3);
-        opacity: 1;
-      }
-      50% {
-        transform: scale(1.2);
-        box-shadow: 0 0 30px rgba(201, 170, 255, 0.7);
-      }
-      100% {
-        transform: scale(1.4);
-        opacity: 0;
-        box-shadow: 0 0 50px rgba(201, 170, 255, 0);
-      }
-    }
   </style>
 </head>
 <body>
+  <!-- Background stars -->
   <div class="stars"></div>
-  <div class="center-content" id="center">
-    <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" id="sigil" />
-    <div class="line" id="line">you were always meant to find this...</div>
-    <a href="main.html" class="enter-button" id="enterBtn">enter the archive</a>
+
+  <!-- Center content -->
+  <div class="center-content">
+    <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
+    <div class="line">you were always meant to find this.</div>
+    <a href="main.html" class="enter-button" onclick="playChime()">enter the archive</a>
   </div>
 
-  <!-- Audio -->
-  <audio id="chimeSound" src="glimmer.mp3" preload="auto"></audio>
+  <!-- Sounds -->
+  <audio id="chime" src="glimmer.wav" preload="auto"></audio>
+  <audio id="ambience" src="ambience.mp3" autoplay loop preload="auto"></audio>
 
-  <!-- Script -->
   <script>
-    const enterBtn = document.getElementById('enterBtn');
-    const chime = document.getElementById('chimeSound');
-    const center = document.getElementById('center');
-    const sigil = document.getElementById('sigil');
-    const line = document.getElementById('line');
+    // Set ambient volume
+    const ambience = document.getElementById('ambience');
+    ambience.volume = 0.05;
 
-    enterBtn.addEventListener('click', function(e) {
-      e.preventDefault();
+    function playChime() {
+      const chime = document.getElementById('chime');
+      const btn = document.querySelector('.enter-button');
       chime.currentTime = 0;
       chime.play();
-      enterBtn.classList.add('animate');
-      sigil.style.opacity = 0;
-      line.style.opacity = 0;
-      center.style.opacity = 0;
-      setTimeout(() => {
-        window.location.href = "main.html";
-      }, 1200);
-    });
+      btn.classList.add('clicked');
+    }
   </script>
 </body>
 </html>

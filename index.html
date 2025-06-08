@@ -94,8 +94,8 @@
     </div>
   </div>
 
-  <!-- Audio -->
-  <audio id="ambience" src="ambience.mp3" loop></audio>
+  <!-- Audio elements -->
+  <audio id="ambience" src="ambience.mp3" loop preload="auto"></audio>
   <audio id="chime" src="chime.mp3" preload="auto"></audio>
 
   <script>
@@ -104,26 +104,26 @@
     const btn = document.getElementById("enter-btn");
     const fadeContainer = document.querySelector('.fade-container');
 
-    let hasPlayedAmbience = false;
+    let ambienceStarted = false;
 
-    // Allow user interaction anywhere to start ambience
-    document.body.addEventListener("click", () => {
-      if (!hasPlayedAmbience) {
-        ambience.volume = 0.4;
-        ambience.play().catch(() => {});
-        hasPlayedAmbience = true;
+    // Wait for first interaction to start ambience
+    window.addEventListener("click", () => {
+      if (!ambienceStarted) {
+        ambience.volume = 0.5;
+        ambience.play().catch(e => console.warn("Autoplay blocked:", e));
+        ambienceStarted = true;
       }
     }, { once: true });
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
 
-      // Play chime (independent of background music)
+      // Ensure chime plays from start on every click
       chime.pause();
       chime.currentTime = 0;
-      chime.play().catch(() => {});
+      chime.play().catch(e => console.warn("Chime blocked:", e));
 
-      // Fade out and go to main page
+      // Fade out and go to main
       fadeContainer.classList.add("fade-out");
       setTimeout(() => {
         window.location.href = "main.html";

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Astraea Archive</title>
   <style>
     html, body {
@@ -15,20 +15,39 @@
       overflow: hidden;
     }
 
-    .stars {
+    /* STARFIELD BACKGROUND */
+    .stars, .stars2, .stars3 {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      background: url('https://i.imgur.com/YOUR_STARFIELD_IMAGE.png') repeat;
-      animation: moveStars 200s linear infinite;
+      width: 200%;
+      height: 200%;
+      background-repeat: repeat;
       z-index: 0;
     }
 
-    @keyframes moveStars {
-      from { background-position: 0 0; }
-      to { background-position: -10000px 10000px; }
+    .stars {
+      background-image: url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png');
+      animation: moveStars 100s linear infinite;
+      opacity: 0.3;
     }
 
+    .stars2 {
+      background-image: url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png');
+      animation: moveStars 150s linear infinite;
+      opacity: 0.2;
+    }
+
+    .stars3 {
+      background-image: url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png');
+      animation: moveStars 200s linear infinite;
+      opacity: 0.1;
+    }
+
+    @keyframes moveStars {
+      from { transform: translate(0, 0); }
+      to { transform: translate(-100px, 100px); }
+    }
+
+    /* CENTER CONTENT */
     .center-content {
       position: absolute;
       top: 50%;
@@ -36,11 +55,6 @@
       transform: translate(-50%, -50%);
       text-align: center;
       z-index: 2;
-      transition: opacity 0.6s ease;
-    }
-
-    .fade-out {
-      opacity: 0;
     }
 
     .sigil {
@@ -67,28 +81,42 @@
       border: 1px solid #c9aaff;
       border-radius: 30px;
       text-decoration: none;
-      transition: background 0.3s ease, transform 0.3s ease;
+      transition: all 0.4s ease;
       cursor: pointer;
     }
 
     .enter-button:hover {
       background: rgba(201, 170, 255, 0.3);
       transform: scale(1.05);
+      box-shadow: 0 0 10px #c9aaff;
     }
 
     @keyframes fadeIn {
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+
+    .fade-out {
+      animation: fadeOut 1s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: scale(1.05);
+      }
+    }
   </style>
 </head>
 <body>
   <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
 
   <div class="center-content" id="fadeContainer">
     <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
     <div class="line">you were always meant to find this.</div>
-    <a class="enter-button" id="enterBtn">enter the archive</a>
+    <a id="enterBtn" class="enter-button">enter the archive</a>
   </div>
 
   <script>
@@ -120,9 +148,12 @@
       clickSound.currentTime = 0;
       clickSound.play().catch(err => console.warn("Click sound blocked:", err));
 
-      clickSound.onended = () => {
+      // Shorten button sound duration to 0.8s, then redirect
+      setTimeout(() => {
+        clickSound.pause();
+        clickSound.currentTime = 0;
         window.location.href = "main.html";
-      };
+      }, 800);
     });
   </script>
 </body>

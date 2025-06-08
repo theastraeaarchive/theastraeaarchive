@@ -15,6 +15,14 @@
       overflow: hidden;
     }
 
+    .fade-container {
+      transition: opacity 0.6s ease;
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
+
     .stars {
       position: absolute;
       width: 100%;
@@ -63,22 +71,11 @@
       border-radius: 30px;
       text-decoration: none;
       transition: background 0.3s ease, transform 0.3s ease;
-      animation: fadeIn 3s ease-out forwards;
     }
 
     .enter-button:hover {
       background: rgba(201, 170, 255, 0.3);
       transform: scale(1.05);
-    }
-
-    .enter-button.clicked {
-      animation: shimmer 0.6s ease-out;
-    }
-
-    @keyframes shimmer {
-      0% { transform: scale(1); filter: drop-shadow(0 0 0px #fff); }
-      50% { transform: scale(1.1); filter: drop-shadow(0 0 20px #fff); }
-      100% { transform: scale(1); filter: drop-shadow(0 0 0px #fff); }
     }
 
     @keyframes fadeIn {
@@ -88,37 +85,43 @@
   </style>
 </head>
 <body>
-  <div class="stars"></div>
-  <div class="center-content">
-    <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
-    <div class="line">you were always meant to find this.</div>
-    <a href="main.html" class="enter-button" onclick="playChime()">enter the archive</a>
+  <div class="fade-container">
+    <div class="stars"></div>
+    <div class="center-content">
+      <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
+      <div class="line">you were always meant to find this.</div>
+      <a href="#" class="enter-button" id="enter-btn">enter the archive</a>
+    </div>
   </div>
 
-  <!-- Audio Elements -->
-  <audio id="chime" src="glimmer.mp3" preload="auto"></audio>
-  <audio id="ambience" src="ambience.mp3" preload="auto" loop></audio>
+  <!-- Audio -->
+  <audio id="ambience" src="ambience.mp3" loop></audio>
+  <audio id="chime" src="chime.mp3"></audio>
 
   <script>
     const ambience = document.getElementById("ambience");
     const chime = document.getElementById("chime");
+    const btn = document.getElementById("enter-btn");
+    const fadeContainer = document.querySelector('.fade-container');
 
     window.addEventListener("DOMContentLoaded", () => {
-      ambience.volume = 0.12; // slightly louder
+      ambience.volume = 0.3;
       ambience.play().catch(() => {
-        // if autoplay fails, try again on user interaction
         document.body.addEventListener("click", () => {
           ambience.play().catch(() => {});
         }, { once: true });
       });
     });
 
-    function playChime() {
-      const btn = document.querySelector('.enter-button');
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
       chime.currentTime = 0;
       chime.play().catch(() => {});
-      btn.classList.add("clicked");
-    }
+      fadeContainer.classList.add("fade-out");
+      setTimeout(() => {
+        window.location.href = "main.html";
+      }, 700);
+    });
   </script>
 </body>
 </html>

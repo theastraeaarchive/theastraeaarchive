@@ -19,44 +19,14 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      background: url('https://i.imgur.com/7R7L7gL.png') repeat;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
       animation: moveStars 200s linear infinite;
       z-index: 0;
-      opacity: 0.5;
     }
 
     @keyframes moveStars {
       from { background-position: 0 0; }
       to { background-position: -10000px 10000px; }
-    }
-
-    .floating-words {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .floating-word {
-      position: absolute;
-      color: rgba(255, 255, 255, 0.08);
-      font-size: 1.2rem;
-      animation: floatWord 30s linear infinite;
-    }
-
-    @keyframes floatWord {
-      0% {
-        transform: translateY(100vh) scale(1);
-        opacity: 0;
-      }
-      50% {
-        opacity: 0.15;
-      }
-      100% {
-        transform: translateY(-100vh) scale(1.2);
-        opacity: 0;
-      }
     }
 
     .center-content {
@@ -65,20 +35,15 @@
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
-      z-index: 3;
+      z-index: 2;
     }
 
     .sigil {
-      width: 150px;
+      width: 160px;
       height: auto;
-      filter: drop-shadow(0 0 12px #c9aaff);
+      filter: drop-shadow(0 0 15px #c9aaff);
       margin-bottom: 2rem;
-      animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
+      transition: transform 1s ease;
     }
 
     .line {
@@ -91,24 +56,22 @@
 
     .enter-button {
       display: inline-block;
-      padding: 12px 28px;
+      padding: 14px 32px;
       font-size: 1rem;
       color: #fff;
       background: rgba(201, 170, 255, 0.1);
       border: 1px solid #c9aaff;
       border-radius: 30px;
       text-decoration: none;
+      cursor: pointer;
       transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      animation: shimmer 2.5s ease-in-out infinite;
     }
 
     .enter-button:hover {
       background: rgba(201, 170, 255, 0.3);
       transform: scale(1.05);
-      box-shadow: 0 0 12px #c9aaff88;
-    }
-
-    .enter-button:active {
-      animation: ripple 0.6s ease-out;
+      box-shadow: 0 0 15px rgba(201, 170, 255, 0.5);
     }
 
     @keyframes fadeIn {
@@ -116,45 +79,43 @@
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes ripple {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
+    @keyframes shimmer {
+      0%, 100% { box-shadow: 0 0 10px rgba(201, 170, 255, 0.2); }
+      50% { box-shadow: 0 0 20px rgba(201, 170, 255, 0.5); }
     }
   </style>
 </head>
 <body>
   <div class="stars"></div>
-  <div class="floating-words">
-    <div class="floating-word" style="left: 10%; animation-delay: 0s;">stardust</div>
-    <div class="floating-word" style="left: 30%; animation-delay: 10s;">memory</div>
-    <div class="floating-word" style="left: 60%; animation-delay: 5s;">echo</div>
-    <div class="floating-word" style="left: 80%; animation-delay: 15s;">signal</div>
-  </div>
+
   <div class="center-content">
     <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
     <div class="line">you were always meant to find this.</div>
-    <a href="main.html" class="enter-button" id="enterButton">enter the archive</a>
+    <a class="enter-button" id="enterBtn">enter the archive</a>
   </div>
 
-  <audio id="ambience" src="ambience.mp3" loop autoplay></audio>
-  <audio id="buttonSound" src="glimmer.mp3"></audio>
+  <audio id="ambience" src="ambience.mp3" loop preload="auto"></audio>
+  <audio id="chime" src="glimmer.mp3" preload="auto"></audio>
 
   <script>
+    // Ensure ambience starts quietly on load
     const ambience = document.getElementById('ambience');
-    const buttonSound = document.getElementById('buttonSound');
-    const enterButton = document.getElementById('enterButton');
+    ambience.volume = 0.3;
 
-    // Ensure ambience plays
+    // Play ambience as soon as user interacts
     window.addEventListener('click', () => {
-      ambience.volume = 0.4;
-      ambience.play().catch(() => {});
+      if (ambience.paused) ambience.play().catch(() => {});
     }, { once: true });
 
-    // Play button sound on click
-    enterButton.addEventListener('click', () => {
-      buttonSound.currentTime = 0;
-      buttonSound.play().catch(() => {});
+    const enterBtn = document.getElementById('enterBtn');
+    const chime = document.getElementById('chime');
+
+    enterBtn.addEventListener('click', () => {
+      chime.currentTime = 0;
+      chime.play().catch(() => {});
+      setTimeout(() => {
+        window.location.href = "main.html";
+      }, 500); // Delay to let chime play
     });
   </script>
 </body>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Astraea Archive</title>
   <style>
     html, body {
@@ -13,38 +13,50 @@
       color: #ffffff;
       font-family: 'Georgia', serif;
       overflow: hidden;
-      cursor: none;
-    }
-
-    .stars, .stars2, .stars3 {
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      background-repeat: repeat;
-      z-index: 0;
     }
 
     .stars {
-      background-image: url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png');
-      animation: moveStars 100s linear infinite;
-      opacity: 0.3;
-    }
-
-    .stars2 {
-      background-image: url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png');
-      animation: moveStars 150s linear infinite;
-      opacity: 0.2;
-    }
-
-    .stars3 {
-      background-image: url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/stars.png');
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url('https://i.imgur.com/7R7L7gL.png') repeat;
       animation: moveStars 200s linear infinite;
-      opacity: 0.1;
+      z-index: 0;
+      opacity: 0.5;
     }
 
     @keyframes moveStars {
-      from { transform: translate(0, 0); }
-      to { transform: translate(-100px, 100px); }
+      from { background-position: 0 0; }
+      to { background-position: -10000px 10000px; }
+    }
+
+    .floating-words {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .floating-word {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.08);
+      font-size: 1.2rem;
+      animation: floatWord 30s linear infinite;
+    }
+
+    @keyframes floatWord {
+      0% {
+        transform: translateY(100vh) scale(1);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.15;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1.2);
+        opacity: 0;
+      }
     }
 
     .center-content {
@@ -53,24 +65,20 @@
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
-      z-index: 2;
+      z-index: 3;
     }
 
     .sigil {
       width: 150px;
       height: auto;
-      filter: drop-shadow(0 0 15px #c9aaff);
+      filter: drop-shadow(0 0 12px #c9aaff);
       margin-bottom: 2rem;
-      animation: pulse 3s infinite ease-in-out;
+      animation: pulse 4s ease-in-out infinite;
     }
 
     @keyframes pulse {
-      0%, 100% {
-        filter: drop-shadow(0 0 12px #c9aaff);
-      }
-      50% {
-        filter: drop-shadow(0 0 25px #d3bbff);
-      }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
     }
 
     .line {
@@ -91,105 +99,62 @@
       border-radius: 30px;
       text-decoration: none;
       transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
     }
 
     .enter-button:hover {
       background: rgba(201, 170, 255, 0.3);
-      box-shadow: 0 0 12px #c9aaff;
       transform: scale(1.05);
+      box-shadow: 0 0 12px #c9aaff88;
+    }
+
+    .enter-button:active {
+      animation: ripple 0.6s ease-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* Fade transition without move */
-    .fade-out {
-      animation: fadeOut 1s ease forwards;
-    }
-
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-      }
-    }
-
-    /* Cursor sparkle trail */
-    .sparkle {
-      position: fixed;
-      width: 5px;
-      height: 5px;
-      background: white;
-      border-radius: 50%;
-      pointer-events: none;
-      opacity: 0.8;
-      animation: sparkleFade 0.7s linear forwards;
-      z-index: 5;
-    }
-
-    @keyframes sparkleFade {
-      to {
-        transform: translateY(-20px) scale(0.5);
-        opacity: 0;
-      }
+    @keyframes ripple {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
 <body>
   <div class="stars"></div>
-  <div class="stars2"></div>
-  <div class="stars3"></div>
-
-  <div class="center-content" id="fadeContainer">
+  <div class="floating-words">
+    <div class="floating-word" style="left: 10%; animation-delay: 0s;">stardust</div>
+    <div class="floating-word" style="left: 30%; animation-delay: 10s;">memory</div>
+    <div class="floating-word" style="left: 60%; animation-delay: 5s;">echo</div>
+    <div class="floating-word" style="left: 80%; animation-delay: 15s;">signal</div>
+  </div>
+  <div class="center-content">
     <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
     <div class="line">you were always meant to find this.</div>
-    <a id="enterBtn" class="enter-button">enter the archive</a>
+    <a href="main.html" class="enter-button" id="enterButton">enter the archive</a>
   </div>
 
+  <audio id="ambience" src="ambience.mp3" loop autoplay></audio>
+  <audio id="buttonSound" src="glimmer.mp3"></audio>
+
   <script>
-    const button = document.getElementById("enterBtn");
-    const fadeContainer = document.getElementById("fadeContainer");
+    const ambience = document.getElementById('ambience');
+    const buttonSound = document.getElementById('buttonSound');
+    const enterButton = document.getElementById('enterButton');
 
-    const bgAudio = new Audio("ambience.mp3");
-    bgAudio.loop = true;
-    bgAudio.volume = 0.5;
+    // Ensure ambience plays
+    window.addEventListener('click', () => {
+      ambience.volume = 0.4;
+      ambience.play().catch(() => {});
+    }, { once: true });
 
-    const clickSound = new Audio("glimmer.mp3");
-    clickSound.volume = 1.0;
-
-    let audioInitialized = false;
-
-    function initAudio() {
-      if (!audioInitialized) {
-        bgAudio.play().catch(err => console.warn("Autoplay blocked:", err));
-        audioInitialized = true;
-      }
-    }
-
-    document.body.addEventListener("click", initAudio, { once: true });
-
-    button.addEventListener("click", (e) => {
-      e.preventDefault();
-      fadeContainer.classList.add("fade-out");
-
-      clickSound.currentTime = 0;
-      clickSound.play().catch(err => console.warn("Click sound error:", err));
-
-      setTimeout(() => {
-        window.location.href = "main.html";
-      }, 1200);
-    });
-
-    // Stardust trail effect
-    document.addEventListener("mousemove", (e) => {
-      const sparkle = document.createElement("div");
-      sparkle.classList.add("sparkle");
-      sparkle.style.left = `${e.clientX}px`;
-      sparkle.style.top = `${e.clientY}px`;
-      document.body.appendChild(sparkle);
-      setTimeout(() => sparkle.remove(), 700);
+    // Play button sound on click
+    enterButton.addEventListener('click', () => {
+      buttonSound.currentTime = 0;
+      buttonSound.play().catch(() => {});
     });
   </script>
 </body>

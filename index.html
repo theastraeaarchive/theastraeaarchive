@@ -36,7 +36,6 @@
       transform: translate(-50%, -50%);
       text-align: center;
       z-index: 2;
-      opacity: 1;
       transition: opacity 0.6s ease;
     }
 
@@ -92,32 +91,40 @@
     <a class="enter-button" id="enterBtn">enter the archive</a>
   </div>
 
-  <audio id="bg-audio" autoplay loop>
-    <source src="ambience.mp3" type="audio/mpeg" />
-  </audio>
-
   <script>
-    const btn = document.getElementById("enterBtn");
+    const button = document.getElementById("enterBtn");
     const fadeContainer = document.getElementById("fadeContainer");
 
-    // Ensure background music volume is subtle
-    const bgAudio = document.getElementById("bg-audio");
-    bgAudio.volume = 0.25;
+    // Audio setup
+    const bgAudio = new Audio("ambience.mp3");
+    bgAudio.loop = true;
+    bgAudio.volume = 0.45;
 
-    btn.addEventListener("click", (e) => {
+    const clickSound = new Audio("glimmer.mp3");
+    clickSound.volume = 1.0;
+
+    let audioInitialized = false;
+
+    function initAudio() {
+      if (!audioInitialized) {
+        bgAudio.play().catch(err => {
+          console.warn("Autoplay blocked:", err);
+        });
+        audioInitialized = true;
+      }
+    }
+
+    document.body.addEventListener("click", initAudio, { once: true });
+
+    button.addEventListener("click", (e) => {
       e.preventDefault();
-
-      // Play chime sound on click
-      const chime = new Audio("chime.mp3");
-      chime.volume = 1.0; // max volume
-      chime.play().then(() => {
-        console.log("✅ Chime played successfully.");
-      }).catch((err) => {
-        console.warn("❌ Chime play error:", err);
+      clickSound.currentTime = 0;
+      clickSound.play().catch(err => {
+        console.warn("Click sound blocked:", err);
       });
 
-      // Fade content and redirect
       fadeContainer.classList.add("fade-out");
+
       setTimeout(() => {
         window.location.href = "main.html";
       }, 700);

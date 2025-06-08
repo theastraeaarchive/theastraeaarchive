@@ -15,14 +15,6 @@
       overflow: hidden;
     }
 
-    .fade-container {
-      transition: opacity 0.6s ease;
-    }
-
-    .fade-out {
-      opacity: 0;
-    }
-
     .stars {
       position: absolute;
       width: 100%;
@@ -44,6 +36,12 @@
       transform: translate(-50%, -50%);
       text-align: center;
       z-index: 2;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+
+    .fade-out {
+      opacity: 0;
     }
 
     .sigil {
@@ -71,6 +69,7 @@
       border-radius: 30px;
       text-decoration: none;
       transition: background 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
     }
 
     .enter-button:hover {
@@ -85,50 +84,39 @@
   </style>
 </head>
 <body>
-  <div class="fade-container">
-    <div class="stars"></div>
-    <div class="center-content">
-      <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
-      <div class="line">you were always meant to find this.</div>
-      <a href="#" class="enter-button" id="enter-btn">enter the archive</a>
-    </div>
+  <div class="stars"></div>
+
+  <div class="center-content" id="fadeContainer">
+    <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
+    <div class="line">you were always meant to find this.</div>
+    <a class="enter-button" id="enterBtn">enter the archive</a>
   </div>
 
-  <!-- Audio -->
-  <audio id="ambience" src="ambience.mp3" loop preload="auto"></audio>
+  <audio id="bg-audio" autoplay loop>
+    <source src="ambience.mp3" type="audio/mpeg" />
+  </audio>
 
   <script>
-    const ambience = document.getElementById("ambience");
-    const btn = document.getElementById("enter-btn");
-    const fadeContainer = document.querySelector(".fade-container");
+    const btn = document.getElementById("enterBtn");
+    const fadeContainer = document.getElementById("fadeContainer");
 
-    let ambienceStarted = false;
-
-    // Start ambience on any user interaction
-    const tryStartAmbience = () => {
-      if (!ambienceStarted) {
-        ambience.volume = 0.6;
-        ambience.play().then(() => {
-          ambienceStarted = true;
-          console.log("Ambience started.");
-        }).catch(err => console.warn("Autoplay error (ambience):", err));
-      }
-    };
-
-    // Attach once to any click
-    window.addEventListener("click", tryStartAmbience, { once: true });
+    // Ensure background music volume is subtle
+    const bgAudio = document.getElementById("bg-audio");
+    bgAudio.volume = 0.25;
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
 
-      // Create a fresh Audio instance for the button chime
+      // Play chime sound on click
       const chime = new Audio("chime.mp3");
-      chime.volume = 1;
+      chime.volume = 1.0; // max volume
       chime.play().then(() => {
-        console.log("Chime played.");
-      }).catch(err => console.warn("Chime play error:", err));
+        console.log("✅ Chime played successfully.");
+      }).catch((err) => {
+        console.warn("❌ Chime play error:", err);
+      });
 
-      // Fade out and redirect
+      // Fade content and redirect
       fadeContainer.classList.add("fade-out");
       setTimeout(() => {
         window.location.href = "main.html";

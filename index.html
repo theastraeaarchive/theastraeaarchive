@@ -104,23 +104,26 @@
     const btn = document.getElementById("enter-btn");
     const fadeContainer = document.querySelector('.fade-container');
 
-    // Start ambience on page load
-    window.addEventListener("DOMContentLoaded", () => {
-      ambience.volume = 0.4;
-      ambience.play().catch(() => {
-        document.body.addEventListener("click", () => ambience.play(), { once: true });
-      });
-    });
+    let hasPlayedAmbience = false;
+
+    // Allow user interaction anywhere to start ambience
+    document.body.addEventListener("click", () => {
+      if (!hasPlayedAmbience) {
+        ambience.volume = 0.4;
+        ambience.play().catch(() => {});
+        hasPlayedAmbience = true;
+      }
+    }, { once: true });
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
 
-      // Ensure chime always plays
+      // Play chime (independent of background music)
       chime.pause();
       chime.currentTime = 0;
       chime.play().catch(() => {});
 
-      // Fade out and redirect
+      // Fade out and go to main page
       fadeContainer.classList.add("fade-out");
       setTimeout(() => {
         window.location.href = "main.html";

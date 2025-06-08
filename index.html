@@ -13,7 +13,7 @@
       color: #ffffff;
       font-family: 'Georgia', serif;
       overflow: hidden;
-      cursor: none; /* hide default cursor */
+      cursor: none;
     }
 
     .stars {
@@ -28,6 +28,11 @@
     @keyframes moveStars {
       from { background-position: 0 0; }
       to { background-position: -10000px 10000px; }
+    }
+
+    .fade-out {
+      opacity: 0;
+      transition: opacity 1s ease-out;
     }
 
     .center-content {
@@ -45,7 +50,6 @@
       height: auto;
       filter: drop-shadow(0 0 15px #c9aaff);
       margin-bottom: 2rem;
-      transition: transform 1s ease;
     }
 
     .line {
@@ -66,7 +70,7 @@
       border-radius: 30px;
       text-decoration: none;
       cursor: none;
-      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.3s ease;
       animation: shimmer 2.5s ease-in-out infinite;
       pointer-events: auto;
     }
@@ -75,6 +79,25 @@
       background: rgba(201, 170, 255, 0.3);
       transform: scale(1.05);
       box-shadow: 0 0 15px rgba(201, 170, 255, 0.5);
+    }
+
+    .enter-button:active {
+      transform: scale(0.92);
+    }
+
+    .clicked {
+      animation: pressFade 0.6s forwards;
+    }
+
+    @keyframes pressFade {
+      0% {
+        transform: scale(0.95);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.1);
+        opacity: 0;
+      }
     }
 
     @keyframes fadeIn {
@@ -100,9 +123,9 @@
   <canvas id="trail"></canvas>
   <div class="stars"></div>
 
-  <div class="center-content">
+  <div class="center-content" id="fadeTarget">
     <img src="astraeaemblem.png" alt="Astraea Archive Sigil" class="sigil" />
-    <div class="line">you were always meant to find this.</div>
+    <div class="line">you were always meant to find this...</div>
     <a class="enter-button" id="enterBtn">enter the archive</a>
   </div>
 
@@ -110,25 +133,29 @@
   <audio id="chime" src="glimmer.mp3" preload="auto"></audio>
 
   <script>
-    // Play ambience on user interaction
+    // Start ambience on interaction
     const ambience = document.getElementById('ambience');
     ambience.volume = 0.35;
     window.addEventListener('click', () => {
       if (ambience.paused) ambience.play().catch(() => {});
     }, { once: true });
 
-    // Button click sound + redirect
+    // Button click logic
     const enterBtn = document.getElementById('enterBtn');
+    const fadeTarget = document.getElementById('fadeTarget');
     const chime = document.getElementById('chime');
+
     enterBtn.addEventListener('click', () => {
       chime.currentTime = 0;
       chime.play().catch(() => {});
+      enterBtn.classList.add('clicked');
+      fadeTarget.classList.add('fade-out');
       setTimeout(() => {
         window.location.href = "main.html";
-      }, 600);
+      }, 800);
     });
 
-    // Cursor trail
+    // Cursor star trail
     const canvas = document.getElementById('trail');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;

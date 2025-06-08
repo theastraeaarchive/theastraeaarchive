@@ -94,36 +94,41 @@
     </div>
   </div>
 
-  <!-- Audio elements -->
+  <!-- Audio -->
   <audio id="ambience" src="ambience.mp3" loop preload="auto"></audio>
-  <audio id="chime" src="chime.mp3" preload="auto"></audio>
 
   <script>
     const ambience = document.getElementById("ambience");
-    const chime = document.getElementById("chime");
     const btn = document.getElementById("enter-btn");
-    const fadeContainer = document.querySelector('.fade-container');
+    const fadeContainer = document.querySelector(".fade-container");
 
     let ambienceStarted = false;
 
-    // Wait for first interaction to start ambience
-    window.addEventListener("click", () => {
+    // Start ambience on any user interaction
+    const tryStartAmbience = () => {
       if (!ambienceStarted) {
-        ambience.volume = 0.5;
-        ambience.play().catch(e => console.warn("Autoplay blocked:", e));
-        ambienceStarted = true;
+        ambience.volume = 0.6;
+        ambience.play().then(() => {
+          ambienceStarted = true;
+          console.log("Ambience started.");
+        }).catch(err => console.warn("Autoplay error (ambience):", err));
       }
-    }, { once: true });
+    };
+
+    // Attach once to any click
+    window.addEventListener("click", tryStartAmbience, { once: true });
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
 
-      // Ensure chime plays from start on every click
-      chime.pause();
-      chime.currentTime = 0;
-      chime.play().catch(e => console.warn("Chime blocked:", e));
+      // Create a fresh Audio instance for the button chime
+      const chime = new Audio("chime.mp3");
+      chime.volume = 1;
+      chime.play().then(() => {
+        console.log("Chime played.");
+      }).catch(err => console.warn("Chime play error:", err));
 
-      // Fade out and go to main
+      // Fade out and redirect
       fadeContainer.classList.add("fade-out");
       setTimeout(() => {
         window.location.href = "main.html";
